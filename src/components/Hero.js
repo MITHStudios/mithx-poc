@@ -5,7 +5,8 @@ const Hero = () => (
     <h1 className="mb-4">MITHx PoC</h1>
 
     <p className="lead">
-      This is a sample application that validates basic functionalities and architecture for MITHx.
+      This is a sample application that validates basic functionalities and
+      architecture for MITHx.
     </p>
   </div>
 );
