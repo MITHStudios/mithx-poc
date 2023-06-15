@@ -39,4 +39,31 @@ app.get("/api/external", checkJwt, (req, res) => {
   });
 });
 
+app.get("/wallet/:token/:id", async (req, res) => {
+  const access_token = req.params.token;
+  const userId = req.params.id;
+
+  const accountResp = await fetch(
+    "https://account.bitski.com/v2/federated-accounts",
+    {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${access_token}`,
+        "User-Agent": "waas-demo/0.0.1",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+      }),
+    }
+  );
+
+  const json = await accountResp.json();
+  const { account } = await json;
+
+  res.send({
+    address: account
+  });
+});
+
 app.listen(port, () => console.log(`API Server listening on port ${port}`));
