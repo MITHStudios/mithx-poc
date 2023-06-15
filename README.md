@@ -1,105 +1,80 @@
-# Auth0 React SDK Sample Application
-
-This sample demonstrates the integration of [Auth0 React SDK](https://github.com/auth0/auth0-react) into a React application created using [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html). The sample is a companion to the [Auth0 React SDK Quickstart](https://auth0.com/docs/quickstart/spa/react).
-
-This sample demonstrates the following use cases:
-
-- [Login](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/components/NavBar.js#L72-L79)
-- [Logout](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/components/NavBar.js#L102-L108)
-- [Showing the user profile](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/views/Profile.js)
-- [Protecting routes](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/views/Profile.js#L33)
-- [Calling APIs](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/views/ExternalApi.js)
+# MITHx PoC
 
 ## Project setup
 
-Use `yarn` to install the project dependencies:
+### 1. Clone the project
+
+Follow the instructions displayed when clicking on the _Code_ button on this repo.
+
+### 2. Install dependencies
 
 ```bash
-yarn install
+npm i
 ```
 
-## Configuration
+### 3. Set up an Auth0 tenant
 
-### Create an API
+Follow Auth0's official instructions [here](https://auth0.com/docs/get-started/auth0-overview/create-tenants).
 
-For the ["call an API"](https://auth0.com/docs/quickstart/spa/react/02-calling-an-api) page to work, you will need to [create an API](https://auth0.com/docs/apis) using the [management dashboard](https://manage.auth0.com/#/apis). This will give you an API identifier that you can use in the `audience` configuration field below.
+You can use a paid license as well as free trial, just as long as you have full access to the tenant dashboard.
 
-If you do not wish to use an API or observe the API call working, you should not specify the `audience` value in the next step. Otherwise, you will receive a "Service not found" error when trying to authenticate.
+### 4. Create an Auth0 application
 
-### Configure credentials
+Follow Auth0's official instructions [here](https://auth0.com/docs/get-started/auth0-overview/create-applications).
 
-The project needs to be configured with your Auth0 domain and client ID in order for the authentication flow to work.
+The recommended preset is _Single-Page Application_. Make sure to correctly set the `Allowed Callback URLs`, `Allowed Logout URLs` and `Allowed Web Origins` fields; the value should be `http://localhost:3000` or your chosen hostname.
 
-To do this, first copy `src/auth_config.json.example` into a new file in the same folder called `src/auth_config.json`, and replace the values with your own Auth0 application credentials, and optionally the base URLs of your application and API:
+See the [Application URIs](https://auth0.com/docs/get-started/auth0-overview/create-applications) page for more information.
 
-```json
-{
-  "domain": "{YOUR AUTH0 DOMAIN}",
-  "clientId": "{YOUR AUTH0 CLIENT ID}",
-  "audience": "{YOUR AUTH0 API_IDENTIFIER}",
-  "appOrigin": "{OPTIONAL: THE BASE URL OF YOUR APPLICATION (default: http://localhost:3000)}",
-  "apiOrigin": "{OPTIONAL: THE BASE URL OF YOUR API (default: http://localhost:3001)}"
-}
+### 5. Auth0 configuration
+
+Copy the `auth_config.example.json` file and rename said copy to `auth_config.json`.
+
+Find these settings in the Auth0 dashboard.
+
+| Parameter  | Description                                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------------------- |
+| `domain`   | Application domain, found under your Application's _Settings_ > _Basic Information_ > _Domain_ section.       |
+| `clientId` | Application client ID, found under your Application's _Settings_ > _Basic Information_ > _Client ID_ section. |
+| `audience` | Auth0 Management API audience, found under _Applications_ > _APIs_ > _Auth0 Management API_ > _API Audience_. |
+
+### 6. env configuration
+
+Copy the `env.example` file and rename said copy to `.env`.
+
+The Bitski values can be obtained from the [developer page](https://developer.bitski.com/) once you have a created account. After having done so, create an app in order to obtain a Client ID.
+
+Make sure your app has API access. Contact the Bitski team in order to enable this.
+
+Find these settings in the Bitski developer page. For the MySQL params, make sure you have access to a running server.
+
+| Parameter                        | Description                                                              |
+| -------------------------------- | ------------------------------------------------------------------------ |
+| `REACT_APP_BITSKI_CLIENT_ID`     | Bitski App Client ID, found under _Credentials_ > _Backend Credentials_. |
+| `REACT_APP_BITSKI_CLIENT_SECRET` | Bitski App Client ID, given when creating the app.                       |
+| `MYSQL_HOST`                     | MySQL server host address.                                               |
+| `MYSQL_USER`                     | MySQL user.                                                              |
+| `MYSQL_PASSWORD`                 | MySQL password for the given user.                                       |
+| `MYSQL_DATABASE`                 | MySQL database name.                                                     |
+
+### 7. Database setup
+
+Create a table for the configured database as shown here:
+
+```sql
+CREATE TABLE `mithx`.`purchases` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `client_id` VARCHAR(45) NOT NULL,
+  `purchase` JSON NOT NULL,
+  PRIMARY KEY (`id`));
 ```
 
-**Note**: Do not specify a value for `audience` here if you do not wish to use the API part of the sample.
+## Execution
 
-## Run the sample
+This command will start both the front-end as well as the
 
-### Compile and hot-reload for development
-
-This compiles and serves the React app and starts the backend API server on port 3001.
+Make sure the database service is running.
 
 ```bash
-yarn run dev
+npm start
 ```
-
-## Deployment
-
-### Compiles and minifies for production
-
-```bash
-yarn run build
-```
-
-### Docker build
-
-To build and run the Docker image, run `exec.sh`, or `exec.ps1` on Windows.
-
-### Run your tests
-
-```bash
-yarn run test
-```
-
-## Frequently Asked Questions
-
-If you're having issues running the sample applications, including issues such as users not being authenticated on page refresh, please [check the auth0-react FAQ](https://github.com/auth0/auth0-react/blob/master/FAQ.md).
-
-## What is Auth0?
-
-Auth0 helps you to:
-
-* Add authentication with [multiple sources](https://auth0.com/docs/identityproviders), either social identity providers such as **Google, Facebook, Microsoft Account, LinkedIn, GitHub, Twitter, Box, Salesforce** (amongst others), or enterprise identity systems like **Windows Azure AD, Google Apps, Active Directory, ADFS, or any SAML Identity Provider**.
-* Add authentication through more traditional **[username/password databases](https://auth0.com/docs/connections/database/custom-db)**.
-* Add support for **[linking different user accounts](https://auth0.com/docs/users/user-account-linking)** with the same user.
-* Support for generating signed [JSON Web Tokens](https://auth0.com/docs/tokens/json-web-tokens) to call your APIs and **flow the user identity** securely.
-* Analytics of how, when, and where users are logging in.
-* Pull data from other sources and add it to the user profile through [JavaScript rules](https://auth0.com/docs/rules).
-
-## Create a Free Auth0 Account
-
-1. Go to [Auth0](https://auth0.com) and click **Sign Up**.
-2. Use Google, GitHub, or Microsoft Account to login.
-
-## Issue Reporting
-
-If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker. The [Responsible Disclosure Program](https://auth0.com/responsible-disclosure-policy) details the procedure for disclosing security issues.
-
-## Author
-
-[Auth0](https://auth0.com)
-
-## License
-
-This project is licensed under the MIT license. See the [LICENSE](../LICENSE) file for more info.
