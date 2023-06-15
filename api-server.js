@@ -4,12 +4,28 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const { auth } = require("express-oauth2-jwt-bearer");
 const authConfig = require("./src/auth_config.json");
+const mysql = require("mysql");
+
+require("dotenv").config();
 
 const app = express();
 
 const port = process.env.API_PORT || 3001;
 const appPort = process.env.SERVER_PORT || 3000;
 const appOrigin = authConfig.appOrigin || `http://localhost:${appPort}`;
+
+const connection = mysql.createConnection({
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABSE,
+});
+connection.connect((err) => {
+  if (err) {
+    throw Error(err);
+  }
+  console.log("Database connected");
+});
 
 if (
   !authConfig.domain ||
@@ -62,7 +78,7 @@ app.get("/wallet/:token/:id", async (req, res) => {
   const { account } = await json;
 
   res.send({
-    address: account
+    address: account,
   });
 });
 
