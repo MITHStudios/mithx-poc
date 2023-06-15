@@ -45,17 +45,14 @@ const BITSKI_AUTH_SERVER = {
 };
 
 export const getBitskiAccessToken = async () => {
-  const BITSKI_CLIENT_ID = process.env.REACT_APP_BITSKI_CLIENT_ID;
-  const BITSKI_CLIENT_SECRET = process.env.REACT_APP_BITSKI_CLIENT_SECRET;
-
   const params = new URLSearchParams();
   params.set("scope", "apps"); // required to mint tokens
 
   const credentialResp = await clientCredentialsGrantRequest(
     BITSKI_AUTH_SERVER,
     {
-      client_id: BITSKI_CLIENT_ID,
-      client_secret: BITSKI_CLIENT_SECRET,
+      client_id: process.env.REACT_APP_BITSKI_CLIENT_ID,
+      client_secret: process.env.REACT_APP_BITSKI_CLIENT_SECRET,
     },
     params
   );
