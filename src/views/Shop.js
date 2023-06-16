@@ -10,6 +10,19 @@ export const Shop = () => {
   const { user } = useAuth0();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState();
+  const [checkoutItems, setCheckoutItems] = useState([]);
+
+  const handleCart = (e) => {
+    const target = e.target;
+    console.log(e.target.checked)
+    console.log(e.target.id);
+
+    if (target.checked){
+      setCheckoutItems(prevState => [...prevState, target.id])
+    }else {
+      setCheckoutItems(prevState => prevState.filter((elem) => elem !== target.id))
+    }    
+  };
 
   useEffect(() => {
     async function fetchProducts(shop) {
@@ -54,7 +67,13 @@ export const Shop = () => {
     {
       field: "buy",
       headerName: "Add to Cart",
-      renderCell: (params) => <input type="checkbox" id={params.value}></input>,
+      renderCell: (params) => (
+        <input
+          type="checkbox"
+          id={params.value}
+          onClick={(e) => handleCart(e)}
+        ></input>
+      ),
     },
   ];
 
@@ -63,6 +82,7 @@ export const Shop = () => {
       <h2>Shop: {process.env.REACT_APP_SHOP_NAME}</h2>
       {error && <>Error: {error}</>}
       {!error && products && <DataGrid rows={products} columns={columns} />}
+      {checkoutItems}
     </Container>
   );
 };
