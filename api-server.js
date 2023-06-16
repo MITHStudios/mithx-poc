@@ -55,6 +55,16 @@ app.get("/api/external", checkJwt, (req, res) => {
   });
 });
 
+app.get("/key/:shop", (req, res) => {
+  const shop = req.params.shop;
+  connection.query(
+    `SELECT * FROM ${process.env.MYSQL_DATABASE}.shops WHERE shops.name = "${shop}"`,
+    function (err, result) {
+      res.send({ key: result[0].api_key, error: err });
+    }
+  );
+});
+
 app.get("/products/:shop", async (req, res) => {
   const productsResp = await fetch(
     `https://${req.params.shop}.myshopify.com/admin/api/2023-04/products.json`,
