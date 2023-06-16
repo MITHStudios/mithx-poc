@@ -7,10 +7,12 @@ import { useEffect, useState } from "react";
 import "./Shop.css";
 
 export const Shop = () => {
+  const shop = process.env.REACT_APP_SHOP_NAME;
   const { user } = useAuth0();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState();
   const [checkoutItems, setCheckoutItems] = useState([]);
+  const [customer, setCustomer] = useState();
 
   const handleCartSelection = (e) => {
     const target = e.target;
@@ -26,20 +28,44 @@ export const Shop = () => {
 
   const handleBuy = () => {};
 
+  // get or create shop user
+  useEffect(() => {
+    async function fetchShopUser(sub, shop) {
+      const response = await fetch(
+        `http://localhost:3001/customer/${sub}/${shop}`
+      );
+      const jsonResponse = await response.json();
+      return jsonResponse;
+    }
+    fetchShopUser(user.sub, shop).then((res) => {
+      if (res.customer === null) {
+        // create customer
+        fetch(`http://localhost:3001/customer/${user.sub}/${shop}`, {
+          method: "POST",
+        }).then((res) => {
+          setCustomer(res.json().customer);
+        });
+      } else {
+        setCustomer(res.customer);
+      }
+    });
+  }, [shop, user.sub]);
+
+  // get shop products
   useEffect(() => {
     async function fetchProducts(shop) {
       const response = await fetch(`http://localhost:3001/products/${shop}`);
       const jsonResponse = await response.json();
       return jsonResponse;
     }
-    fetchProducts(process.env.REACT_APP_SHOP_NAME).then((res) => {
+    fetchProducts(shop).then((res) => {
       if (res.error) {
         setError(res.error);
       } else {
         const p = [];
         const regex = /(<([^>]+)>)/gi;
-        res.products.map((product) =>
-          product.variants.map((variant) => {
+        res.products.forEach((product) =>
+          product.variants.forEach((variant) => {
             p.push({
               id: variant.id,
               title: product.title,
@@ -55,7 +81,7 @@ export const Shop = () => {
         setProducts(p);
       }
     });
-  }, []);
+  }, [shop]);
 
   const columns = [
     { field: "title", headerName: "Title", width: 300 },
@@ -63,7 +89,7 @@ export const Shop = () => {
     {
       field: "image",
       headerName: "Image",
-      renderCell: (params) => <img width="100px" src={params.value} />,
+      renderCell: (params) => <img width="100px" src={params.value} alt={""} />,
     },
     { field: "price", headerName: "Price" },
     {
@@ -81,7 +107,7 @@ export const Shop = () => {
 
   return (
     <Container className="mb-5">
-      <h2>Shop: {process.env.REACT_APP_SHOP_NAME}</h2>
+      <h2>Shop: {shop}</h2>
       {error && <>Error: {error}</>}
       {!error && products && <DataGrid rows={products} columns={columns} />}
       <div className="buy">

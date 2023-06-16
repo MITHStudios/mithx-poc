@@ -55,6 +55,71 @@ app.get("/api/external", checkJwt, (req, res) => {
   });
 });
 
+app.get("/customer/:id/:shop", async (req, res) => {
+  const sub = req.params.id;
+  const shop = req.params.shop;
+
+  connection.query(
+    `SELECT * FROM ${process.env.MYSQL_DATABASE}.customers WHERE customers.shop = "${shop}" AND customers.sub = "${sub}"`,
+    async function (err, result) {
+      res.send({
+        error: err,
+        customer: result[0] ? result[0].email : null,
+      });
+    }
+  );
+});
+
+app.post("/customer/:id/:shop", async (req, res) => {
+  const sub = req.params.id;
+  const shop = req.params.shop;
+  const email = `${sub.split("|")[1]}@${shop.split("-")[1]}.com`;
+  const password = `mithx_${shop.split("-")[1]}`; // replace with safe password
+
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append(
+    "X-Shopify-Storefront-Access-Token",
+    process.env.REACT_APP_STOREFRONT_TOKEN
+  );
+
+  var graphql = JSON.stringify({
+    query:
+      "mutation customerCreate($input: CustomerCreateInput!) {\n  customerCreate(input: $input) {\n    customer {\n      email\n      firstName\n      lastName\n      id\n    }\n    customerUserErrors {\n      message\n    }\n  }\n}",
+    variables: {
+      input: { email, password },
+    },
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  fetch(
+    `https://${shop}.myshopify.com/api/2023-04/graphql.json`,
+    requestOptions
+  ).then((response) => {
+    const responseJson = response.json();
+    if (responseJson.errors){
+      throw Error(responseJson.errors);
+    }
+
+    connection.query(
+      `INSERT INTO ${process.env.MYSQL_DATABASE}.customers (sub, shop, email, password) VALUES ("${sub}", "${shop}", "${email}", "${password}")`,
+      async function (err, result) {
+        console.log(err, result);
+      }
+    );
+
+    res.send({
+      customer: email
+    })
+  });
+});
+
 app.get("/products/:shop", async (req, res) => {
   const shop = req.params.shop;
 
