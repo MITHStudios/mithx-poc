@@ -53,7 +53,6 @@ Find these settings in the Bitski developer page. For the MySQL params, make sur
 | `REACT_APP_BITSKI_CLIENT_ID`     | Bitski App Client ID, found under _Credentials_ > _Backend Credentials_.                                   |
 | `REACT_APP_BITSKI_CLIENT_SECRET` | Bitski App Client ID, given when creating the app.                                                         |
 | `REACT_APP_SHOP_NAME`            | Shopify Shop name, found in the URL for a Shopify account -- after the `https://` and before `.myshopify`. |
-| `SHOPIFY_ADMIN_TOKEN`            | Shopify Admin API access token. More info [here](https://shopify.dev/docs/api/admin/getting-started).      |
 | `MYSQL_HOST`                     | MySQL server host address.                                                                                 |
 | `MYSQL_USER`                     | MySQL user.                                                                                                |
 | `MYSQL_PASSWORD`                 | MySQL password for the given user.                                                                         |
@@ -64,12 +63,14 @@ Find these settings in the Bitski developer page. For the MySQL params, make sur
 Create a table for the configured database as shown here:
 
 ```sql
-CREATE TABLE `mithx`.`purchases` (
+CREATE TABLE `mithx`.`shops` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `client_id` VARCHAR(45) NOT NULL,
-  `purchase` JSON NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `api_key` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`));
 ```
+
+Then, add a row with your shop name and API key to use. The shop name must match the one set up in the previous section.
 
 ## Execution
 

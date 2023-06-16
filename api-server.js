@@ -68,7 +68,10 @@ app.get("/products/:shop", async (req, res) => {
     }
   );
   const jsonResponse = await productsResp.json();
-  res.send({ products: jsonResponse.products });
+  res.send({
+    products: jsonResponse.products ? jsonResponse.products : [],
+    error: jsonResponse.errors ? jsonResponse.errors : null,
+  });
 });
 
 app.get("/wallet/:token/:id", async (req, res) => {
