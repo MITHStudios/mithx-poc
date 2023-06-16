@@ -67,8 +67,8 @@ app.get("/products/:shop", async (req, res) => {
       }),
     }
   );
-  const products = await productsResp.json();
-  res.send({ products: products });
+  const jsonResponse = await productsResp.json();
+  res.send({ products: jsonResponse.products });
 });
 
 app.get("/wallet/:token/:id", async (req, res) => {
