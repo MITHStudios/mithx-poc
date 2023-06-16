@@ -48,14 +48,16 @@ Make sure your app has API access. Contact the Bitski team in order to enable th
 
 Find these settings in the Bitski developer page. For the MySQL params, make sure you have access to a running server.
 
-| Parameter                        | Description                                                              |
-| -------------------------------- | ------------------------------------------------------------------------ |
-| `REACT_APP_BITSKI_CLIENT_ID`     | Bitski App Client ID, found under _Credentials_ > _Backend Credentials_. |
-| `REACT_APP_BITSKI_CLIENT_SECRET` | Bitski App Client ID, given when creating the app.                       |
-| `MYSQL_HOST`                     | MySQL server host address.                                               |
-| `MYSQL_USER`                     | MySQL user.                                                              |
-| `MYSQL_PASSWORD`                 | MySQL password for the given user.                                       |
-| `MYSQL_DATABASE`                 | MySQL database name.                                                     |
+| Parameter                        | Description                                                                                                |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `REACT_APP_BITSKI_CLIENT_ID`     | Bitski App Client ID, found under _Credentials_ > _Backend Credentials_.                                   |
+| `REACT_APP_BITSKI_CLIENT_SECRET` | Bitski App Client ID, given when creating the app.                                                         |
+| `REACT_APP_SHOP_NAME`            | Shopify Shop name, found in the URL for a Shopify account -- after the `https://` and before `.myshopify`. |
+| `SHOPIFY_ADMIN_TOKEN`            | Shopify Admin API access token. More info [here](https://shopify.dev/docs/api/admin/getting-started).      |
+| `MYSQL_HOST`                     | MySQL server host address.                                                                                 |
+| `MYSQL_USER`                     | MySQL user.                                                                                                |
+| `MYSQL_PASSWORD`                 | MySQL password for the given user.                                                                         |
+| `MYSQL_DATABASE`                 | MySQL database name.                                                                                       |
 
 ### 7. Database setup
 

@@ -55,6 +55,22 @@ app.get("/api/external", checkJwt, (req, res) => {
   });
 });
 
+app.get("/products/:shop", async (req, res) => {
+  const productsResp = await fetch(
+    `https://${req.params.shop}.myshopify.com/admin/api/2023-04/products.json`,
+    {
+      method: "GET",
+      redirect: "follow",
+      headers: new Headers({
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": process.env.SHOPIFY_ADMIN_TOKEN,
+      }),
+    }
+  );
+  const products = await productsResp.json();
+  res.send({ products: products });
+});
+
 app.get("/wallet/:token/:id", async (req, res) => {
   const access_token = req.params.token;
   const userId = req.params.id;
