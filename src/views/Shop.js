@@ -24,13 +24,17 @@ export const Shop = () => {
         const p = [];
         const regex = /(<([^>]+)>)/gi;
         res.products.map((product) =>
-          p.push({
-            id: product.id,
-            title: product.title,
-            description: product.body_html
-              ? product.body_html.replace(regex, "")
-              : "",
-            image: product.image ? product.image.src : "",
+          product.variants.map((variant) => {
+            p.push({
+              id: variant.id,
+              title: product.title,
+              description: product.body_html
+                ? product.body_html.replace(regex, "")
+                : "",
+              image: product.image ? product.image.src : "",
+              price: "$" + variant.price,
+              buy: variant.id,
+            });
           })
         );
         setProducts(p);
@@ -40,11 +44,17 @@ export const Shop = () => {
 
   const columns = [
     { field: "title", headerName: "Title", width: 300 },
-    { field: "description", headerName: "Description", width: 500 },
+    { field: "description", headerName: "Description", width: 400 },
     {
       field: "image",
       headerName: "Image",
       renderCell: (params) => <img width="100px" src={params.value} />,
+    },
+    { field: "price", headerName: "Price" },
+    {
+      field: "buy",
+      headerName: "Add to Cart",
+      renderCell: (params) => <input type="checkbox" id={params.value}></input>,
     },
   ];
 
