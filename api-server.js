@@ -55,33 +55,39 @@ app.get("/api/external", checkJwt, (req, res) => {
   });
 });
 
-app.get("/key/:shop", (req, res) => {
+app.get("/products/:shop", async (req, res) => {
   const shop = req.params.shop;
+
   connection.query(
     `SELECT * FROM ${process.env.MYSQL_DATABASE}.shops WHERE shops.name = "${shop}"`,
-    function (err, result) {
-      res.send({ key: result[0].api_key, error: err });
-    }
-  );
-});
+    async function (err, result) {
+      if (err) {
+        res.send({
+          products: [],
+          error: err,
+        });
+      }
+      const shopKey = result[0].api_key;
 
-app.get("/products/:shop", async (req, res) => {
-  const productsResp = await fetch(
-    `https://${req.params.shop}.myshopify.com/admin/api/2023-04/products.json`,
-    {
-      method: "GET",
-      redirect: "follow",
-      headers: new Headers({
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": process.env.SHOPIFY_ADMIN_TOKEN,
-      }),
+      const productsResp = await fetch(
+        `https://${shop}.myshopify.com/admin/api/2023-04/products.json`,
+        {
+          method: "GET",
+          redirect: "follow",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": shopKey,
+          }),
+        }
+      );
+      const jsonResponse = await productsResp.json();
+
+      res.send({
+        products: jsonResponse.products ? jsonResponse.products : [],
+        error: jsonResponse.errors ? jsonResponse.errors : null,
+      });
     }
   );
-  const jsonResponse = await productsResp.json();
-  res.send({
-    products: jsonResponse.products ? jsonResponse.products : [],
-    error: jsonResponse.errors ? jsonResponse.errors : null,
-  });
 });
 
 app.get("/wallet/:token/:id", async (req, res) => {
