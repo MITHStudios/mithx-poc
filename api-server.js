@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
@@ -42,6 +43,8 @@ if (
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors({ origin: appOrigin }));
+app.use(express.json()); // to support JSON-encoded bodies
+app.use(express.urlencoded()); // to support URL-encoded bodies
 
 const checkJwt = auth({
   audience: authConfig.audience,
@@ -103,7 +106,7 @@ app.post("/customer/:id/:shop", async (req, res) => {
     requestOptions
   ).then((response) => {
     const responseJson = response.json();
-    if (responseJson.errors){
+    if (responseJson.errors) {
       throw Error(responseJson.errors);
     }
 
@@ -115,9 +118,57 @@ app.post("/customer/:id/:shop", async (req, res) => {
     );
 
     res.send({
-      customer: email
-    })
+      customer: email,
+    });
   });
+});
+
+app.post("/checkout/:shop", async (req, res) => {
+  const shop = req.params.shop;
+
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append(
+    "X-Shopify-Storefront-Access-Token",
+    process.env.REACT_APP_STOREFRONT_TOKEN
+  );
+
+  const lineItems = req.body.cart.map((item) => ({
+    quantity: 1,
+    variantId: "gid://shopify/ProductVariant/" + item,
+  }));
+
+  var graphql = JSON.stringify({
+    query:
+      "mutation checkoutCreate($input: CheckoutCreateInput!) {\n  checkoutCreate(input: $input) {\n    checkout {\n      id\n      webUrl\n    }\n    checkoutUserErrors {\n      message\n    }\n    queueToken\n  }\n}",
+    variables: {
+      input: {
+        email: req.body.customer,
+        lineItems: lineItems,
+      },
+    },
+  });
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  fetch(
+    `https://${shop}.myshopify.com/api/2023-04/graphql.json`,
+    requestOptions
+  )
+    .then((response) => {
+      response.json().then((r) =>
+        res.send({
+          checkoutUrl: r.data.checkoutCreate.checkout.webUrl,
+        })
+      );
+    })
+    .catch((error) => {
+      throw Error(error);
+    });
 });
 
 app.get("/products/:shop", async (req, res) => {

@@ -26,7 +26,22 @@ export const Shop = () => {
     }
   };
 
-  const handleBuy = () => {};
+  const handleBuy = () => {
+    fetch(`http://localhost:3001/checkout/${shop}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        customer: customer,
+        cart: checkoutItems,
+      }),
+    }).then((res) => {
+      res.json().then((resJson) => {
+        window.location.replace(resJson.checkoutUrl);
+      });
+    });
+  };
 
   // get or create shop user
   useEffect(() => {
