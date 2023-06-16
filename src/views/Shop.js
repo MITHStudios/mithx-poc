@@ -9,18 +9,21 @@ import "./Shop.css";
 export const Shop = () => {
   const { user } = useAuth0();
   const [products, setProducts] = useState([]);
+  const [error, setError] = useState();
 
   useEffect(() => {
     async function fetchProducts(shop) {
       const response = await fetch(`http://localhost:3001/products/${shop}`);
       const jsonResponse = await response.json();
-      return jsonResponse.products;
+      return jsonResponse;
     }
-    fetchProducts(process.env.REACT_APP_SHOP_NAME) //.then(response => response.json())
-      .then((res) => {
+    fetchProducts(process.env.REACT_APP_SHOP_NAME).then((res) => {
+      if (res.error) {
+        setError(res.error);
+      } else {
         const p = [];
         const regex = /(<([^>]+)>)/gi;
-        res.map((product) =>
+        res.products.map((product) =>
           p.push({
             id: product.id,
             title: product.title,
@@ -31,7 +34,8 @@ export const Shop = () => {
           })
         );
         setProducts(p);
-      });
+      }
+    });
   }, []);
 
   const columns = [
@@ -47,7 +51,8 @@ export const Shop = () => {
   return (
     <Container className="mb-5">
       <h2>Shop: {process.env.REACT_APP_SHOP_NAME}</h2>
-      {products && <DataGrid rows={products} columns={columns} />}
+      {error && <>Error: {error}</>}
+      {!error && products && <DataGrid rows={products} columns={columns} />}
     </Container>
   );
 };
