@@ -85,7 +85,7 @@ Then, add a row with your shop name and API key to use to the `shops` table. The
 
 ## Execution
 
-This command will start both the front-end as well as the
+This command will start both the react front-end as well as the express back-end.
 
 Make sure the database service is running.
 
