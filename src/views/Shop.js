@@ -10,7 +10,6 @@ export const Shop = () => {
   const shop = process.env.REACT_APP_SHOP_NAME;
   const { user } = useAuth0();
   const [products, setProducts] = useState([]);
-  const [error, setError] = useState();
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [customer, setCustomer] = useState();
   const [loading, setLoading] = useState(false);
@@ -81,29 +80,25 @@ export const Shop = () => {
       return jsonResponse;
     }
     fetchProducts(shop).then((res) => {
-      if (res.error) {
-        setError(res.error);
-      } else {
-        const p = [];
-        const regex = /(<([^>]+)>)/gi;
-        res.products.forEach((product) => {
-          if (product.status === "active") {
-            product.variants.forEach((variant) => {
-              p.push({
-                id: variant.id,
-                title: product.title,
-                description: product.body_html
-                  ? product.body_html.replace(regex, "")
-                  : "",
-                image: product.image ? product.image.src : "",
-                price: "$" + variant.price,
-                buy: variant.id,
-              });
+      const p = [];
+      const regex = /(<([^>]+)>)/gi;
+      res.products.forEach((product) => {
+        if (product.status === "active") {
+          product.variants.forEach((variant) => {
+            p.push({
+              id: variant.id,
+              title: product.title,
+              description: product.body_html
+                ? product.body_html.replace(regex, "")
+                : "",
+              image: product.image ? product.image.src : "",
+              price: "$" + variant.price,
+              buy: variant.id,
             });
-          }
-        });
-        setProducts(p);
-      }
+          });
+        }
+      });
+      setProducts(p);
     });
   }, [shop]);
 
@@ -135,8 +130,7 @@ export const Shop = () => {
       {!loading && (
         <>
           <h2>Shop: {shop}</h2>
-          {error && <>Error: {error}</>}
-          {!error && products && <DataGrid rows={products} columns={columns} />}
+          {products && <DataGrid rows={products} columns={columns} />}
           <div className="buy">
             <button
               className="btn btn-primary"

@@ -105,20 +105,17 @@ app.post("/customer/:id/:shop", async (req, res) => {
     `https://${shop}.myshopify.com/api/2023-04/graphql.json`,
     requestOptions
   ).then((response) => {
-    const responseJson = response.json();
-    if (responseJson.errors) {
-      throw Error(responseJson.errors);
-    }
+    response.json().then((responseJson) => {
+      connection.query(
+        `INSERT INTO ${process.env.MYSQL_DATABASE}.customers (sub, shop, shopify_id, email, password) VALUES ("${sub}", "${shop}", "${responseJson.data.customerCreate.customer.id}", "${email}", "${password}")`,
+        async function (err, result) {
+          console.log(err, result);
+        }
+      );
 
-    connection.query(
-      `INSERT INTO ${process.env.MYSQL_DATABASE}.customers (sub, shop, email, password) VALUES ("${sub}", "${shop}", "${email}", "${password}")`,
-      async function (err, result) {
-        console.log(err, result);
-      }
-    );
-
-    res.send({
-      customer: email,
+      res.send({
+        customer: email,
+      });
     });
   });
 });
@@ -158,17 +155,13 @@ app.post("/checkout/:shop", async (req, res) => {
   fetch(
     `https://${shop}.myshopify.com/api/2023-04/graphql.json`,
     requestOptions
-  )
-    .then((response) => {
-      response.json().then((r) =>
-        res.send({
-          checkoutUrl: r.data.checkoutCreate.checkout.webUrl,
-        })
-      );
-    })
-    .catch((error) => {
-      throw Error(error);
-    });
+  ).then((response) => {
+    response.json().then((r) =>
+      res.send({
+        checkoutUrl: r.data.checkoutCreate.checkout.webUrl,
+      })
+    );
+  });
 });
 
 app.get("/products/:shop", async (req, res) => {

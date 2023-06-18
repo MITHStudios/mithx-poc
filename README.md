@@ -74,6 +74,7 @@ CREATE TABLE `shops` (
 CREATE TABLE `customers` (
   `sub` varchar(45) NOT NULL,
   `shop` varchar(45) NOT NULL,
+  `shopify_id` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
   PRIMARY KEY (`sub`,`shop`)
