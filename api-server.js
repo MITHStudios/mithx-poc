@@ -66,7 +66,6 @@ app.get("/customer/:id/:shop", async (req, res) => {
     `SELECT * FROM ${process.env.MYSQL_DATABASE}.customers WHERE customers.shop = "${shop}" AND customers.sub = "${sub}"`,
     async function (err, result) {
       res.send({
-        error: err,
         customer: result[0] ? result[0].email : null,
       });
     }
@@ -109,13 +108,11 @@ app.post("/customer/:id/:shop", async (req, res) => {
       connection.query(
         `INSERT INTO ${process.env.MYSQL_DATABASE}.customers (sub, shop, shopify_id, email, password) VALUES ("${sub}", "${shop}", "${responseJson.data.customerCreate.customer.id}", "${email}", "${password}")`,
         async function (err, result) {
-          console.log(err, result);
+          res.send({
+            customer: email,
+          });
         }
       );
-
-      res.send({
-        customer: email,
-      });
     });
   });
 });
@@ -152,15 +149,14 @@ app.post("/checkout/:shop", async (req, res) => {
     redirect: "follow",
   };
 
-  fetch(
+  const checkoutResp = await fetch(
     `https://${shop}.myshopify.com/api/2023-04/graphql.json`,
     requestOptions
-  ).then((response) => {
-    response.json().then((r) =>
-      res.send({
-        checkoutUrl: r.data.checkoutCreate.checkout.webUrl,
-      })
-    );
+  );
+  const jsonResponse = await checkoutResp.json();
+  
+  res.send({
+    checkoutUrl: jsonResponse.data.checkoutCreate.checkout.webUrl,
   });
 });
 
@@ -170,12 +166,6 @@ app.get("/products/:shop", async (req, res) => {
   connection.query(
     `SELECT * FROM ${process.env.MYSQL_DATABASE}.shops WHERE shops.name = "${shop}"`,
     async function (err, result) {
-      if (err) {
-        res.send({
-          products: [],
-          error: err,
-        });
-      }
       const shopKey = result[0].api_key;
 
       const productsResp = await fetch(
@@ -192,8 +182,7 @@ app.get("/products/:shop", async (req, res) => {
       const jsonResponse = await productsResp.json();
 
       res.send({
-        products: jsonResponse.products ? jsonResponse.products : [],
-        error: jsonResponse.errors ? jsonResponse.errors : null,
+        products: jsonResponse.products,
       });
     }
   );
@@ -217,12 +206,10 @@ app.get("/wallet/:token/:id", async (req, res) => {
       }),
     }
   );
-
-  const json = await accountResp.json();
-  const { account } = await json;
+  const jsonResponse = await accountResp.json();
 
   res.send({
-    address: account,
+    address: jsonResponse.account,
   });
 });
 

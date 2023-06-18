@@ -8,6 +8,8 @@ Follow the instructions displayed when clicking on the _Code_ button on the GitH
 
 ### 2. Install dependencies
 
+Make sure to use node v18.
+
 ```bash
 npm i
 ```
@@ -89,7 +91,7 @@ Then, add a row with your shop name and API key to use to the `shops` table. The
 
 This command will start both the react front-end as well as the express back-end.
 
-Make sure the database service is running.
+Make sure the database service is running and that you are using node v18.
 
 ```bash
 npm start
