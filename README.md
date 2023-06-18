@@ -50,6 +50,7 @@ Find these settings in the Bitski developer page. For the MySQL params, make sur
 
 | Parameter                        | Description                                                                                                         |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `REACT_APP_BACKEND_URL`          | Back-end URL, default value is `http://localhost:3001`.                                                             |
 | `REACT_APP_BITSKI_CLIENT_ID`     | Bitski App Client ID, found under _Credentials_ > _Backend Credentials_.                                            |
 | `REACT_APP_BITSKI_CLIENT_SECRET` | Bitski App Client ID, given when creating the app.                                                                  |
 | `REACT_APP_SHOP_NAME`            | Shopify Shop name, found in the URL for a Shopify account -- after the `https://` and before `.myshopify`.          |

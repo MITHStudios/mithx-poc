@@ -15,7 +15,7 @@ export const Wallet = () => {
     setLoading(true);
     const token = await getBitskiAccessToken();
     const response = await fetch(
-      `http://localhost:3001/wallet/${token}/${user.sub}`
+      `${process.env.REACT_APP_BACKEND_URL}/wallet/${token}/${user.sub}`
     );
     const res = await response.json();
     setAddress(res.address);

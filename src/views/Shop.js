@@ -13,6 +13,7 @@ export const Shop = () => {
   const [error, setError] = useState();
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [customer, setCustomer] = useState();
+  const [loading, setLoading] = useState(false);
 
   const handleCartSelection = (e) => {
     const target = e.target;
@@ -27,7 +28,8 @@ export const Shop = () => {
   };
 
   const handleBuy = () => {
-    fetch(`http://localhost:3001/checkout/${shop}`, {
+    setLoading(true);
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/checkout/${shop}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -47,7 +49,7 @@ export const Shop = () => {
   useEffect(() => {
     async function fetchShopUser(sub, shop) {
       const response = await fetch(
-        `http://localhost:3001/customer/${sub}/${shop}`
+        `${process.env.REACT_APP_BACKEND_URL}/customer/${sub}/${shop}`
       );
       const jsonResponse = await response.json();
       return jsonResponse;
@@ -55,9 +57,12 @@ export const Shop = () => {
     fetchShopUser(user.sub, shop).then((res) => {
       if (res.customer === null) {
         // create customer
-        fetch(`http://localhost:3001/customer/${user.sub}/${shop}`, {
-          method: "POST",
-        }).then((res) => {
+        fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/customer/${user.sub}/${shop}`,
+          {
+            method: "POST",
+          }
+        ).then((res) => {
           setCustomer(res.json().customer);
         });
       } else {
@@ -69,7 +74,9 @@ export const Shop = () => {
   // get shop products
   useEffect(() => {
     async function fetchProducts(shop) {
-      const response = await fetch(`http://localhost:3001/products/${shop}`);
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/products/${shop}`
+      );
       const jsonResponse = await response.json();
       return jsonResponse;
     }
@@ -79,20 +86,22 @@ export const Shop = () => {
       } else {
         const p = [];
         const regex = /(<([^>]+)>)/gi;
-        res.products.forEach((product) =>
-          product.variants.forEach((variant) => {
-            p.push({
-              id: variant.id,
-              title: product.title,
-              description: product.body_html
-                ? product.body_html.replace(regex, "")
-                : "",
-              image: product.image ? product.image.src : "",
-              price: "$" + variant.price,
-              buy: variant.id,
+        res.products.forEach((product) => {
+          if (product.status === "active") {
+            product.variants.forEach((variant) => {
+              p.push({
+                id: variant.id,
+                title: product.title,
+                description: product.body_html
+                  ? product.body_html.replace(regex, "")
+                  : "",
+                image: product.image ? product.image.src : "",
+                price: "$" + variant.price,
+                buy: variant.id,
+              });
             });
-          })
-        );
+          }
+        });
         setProducts(p);
       }
     });
@@ -122,14 +131,23 @@ export const Shop = () => {
 
   return (
     <Container className="mb-5">
-      <h2>Shop: {shop}</h2>
-      {error && <>Error: {error}</>}
-      {!error && products && <DataGrid rows={products} columns={columns} />}
-      <div className="buy">
-        <button className="btn btn-primary" onClick={handleBuy}>
-          Buy {checkoutItems.length > 0 && <>({checkoutItems.length})</>}
-        </button>
-      </div>
+      {loading && <Loading />}
+      {!loading && (
+        <>
+          <h2>Shop: {shop}</h2>
+          {error && <>Error: {error}</>}
+          {!error && products && <DataGrid rows={products} columns={columns} />}
+          <div className="buy">
+            <button
+              className="btn btn-primary"
+              onClick={handleBuy}
+              disabled={checkoutItems.length === 0}
+            >
+              Buy {checkoutItems.length > 0 && <>({checkoutItems.length})</>}
+            </button>
+          </div>
+        </>
+      )}
     </Container>
   );
 };
