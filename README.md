@@ -4,7 +4,7 @@
 
 ### 1. Clone the project
 
-Follow the instructions displayed when clicking on the _Code_ button on this repo.
+Follow the instructions displayed when clicking on the _Code_ button on the GitHub page for this repo.
 
 ### 2. Install dependencies
 
@@ -22,7 +22,7 @@ You can use a paid license as well as free trial, just as long as you have full 
 
 Follow Auth0's official instructions [here](https://auth0.com/docs/get-started/auth0-overview/create-applications).
 
-The recommended preset is _Single-Page Application_. Make sure to correctly set the `Allowed Callback URLs`, `Allowed Logout URLs` and `Allowed Web Origins` fields; the value should be `http://localhost:3000` or your chosen hostname.
+The recommended preset is _Single-Page Application_. Make sure to correctly set the `Allowed Callback URLs`, `Allowed Logout URLs` and `Allowed Web Origins` fields; the value should be `http://localhost:3000` or your chosen host.
 
 See the [Application URIs](https://auth0.com/docs/get-started/auth0-overview/create-applications) page for more information.
 
@@ -30,7 +30,7 @@ See the [Application URIs](https://auth0.com/docs/get-started/auth0-overview/cre
 
 Copy the `auth_config.example.json` file and rename said copy to `auth_config.json`.
 
-Find these settings in the Auth0 dashboard.
+Find these settings in the Auth0 dashboard and set them in your `auth_config.json` file.
 
 | Parameter  | Description                                                                                                   |
 | ---------- | ------------------------------------------------------------------------------------------------------------- |
@@ -42,11 +42,13 @@ Find these settings in the Auth0 dashboard.
 
 Copy the `env.example` file and rename said copy to `.env`.
 
-The Bitski values can be obtained from the [developer page](https://developer.bitski.com/) once you have a created account. After having done so, create an app in order to obtain a Client ID.
+Find these settings in the Bitski developer page. For the MySQL params, make sure you have access to a running MySQL server.
 
-Make sure your app has API access. Contact the Bitski team in order to enable this.
+The Bitski values can be obtained from the [developer page](https://developer.bitski.com/) once you have a created account. After having done so, create an app in order to obtain a Client ID. Make sure your app has API access. Contact the Bitski team in order to enable this.
 
-Find these settings in the Bitski developer page. For the MySQL params, make sure you have access to a running server.
+You'll need a Shopify shop as well as a storefront token for the Shopify parameters.
+
+Set these values in your `.env` file.
 
 | Parameter                        | Description                                                                                                         |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -54,7 +56,7 @@ Find these settings in the Bitski developer page. For the MySQL params, make sur
 | `REACT_APP_BITSKI_CLIENT_ID`     | Bitski App Client ID, found under _Credentials_ > _Backend Credentials_.                                            |
 | `REACT_APP_BITSKI_CLIENT_SECRET` | Bitski App Client ID, given when creating the app.                                                                  |
 | `REACT_APP_SHOP_NAME`            | Shopify Shop name, found in the URL for a Shopify account -- after the `https://` and before `.myshopify`.          |
-| `REACT_APP_STOREFRONT_TOKEN`     | Shopify [Storefront token](https://shopify.dev/docs/api/usage/authentication#access-tokens-for-the-storefront-api). |
+| `STOREFRONT_TOKEN`               | Shopify [Storefront token](https://shopify.dev/docs/api/usage/authentication#access-tokens-for-the-storefront-api). |
 | `MYSQL_HOST`                     | MySQL server host address.                                                                                          |
 | `MYSQL_USER`                     | MySQL user.                                                                                                         |
 | `MYSQL_PASSWORD`                 | MySQL password for the given user.                                                                                  |

@@ -83,7 +83,7 @@ app.post("/customer/:id/:shop", async (req, res) => {
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append(
     "X-Shopify-Storefront-Access-Token",
-    process.env.REACT_APP_STOREFRONT_TOKEN
+    process.env.STOREFRONT_TOKEN
   );
 
   var graphql = JSON.stringify({
@@ -127,7 +127,7 @@ app.post("/checkout/:shop", async (req, res) => {
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append(
     "X-Shopify-Storefront-Access-Token",
-    process.env.REACT_APP_STOREFRONT_TOKEN
+    process.env.STOREFRONT_TOKEN
   );
 
   const lineItems = req.body.cart.map((item) => ({
