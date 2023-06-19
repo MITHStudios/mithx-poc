@@ -1,0 +1,8 @@
+.MuiToolbar-root > * {
+  margin-bottom: 0;
+}
+
+.buy {
+  margin-top: 2vh;
+  text-align: center;
+}
