@@ -7,6 +7,10 @@ const Hero = () => (
     <p className="lead">
       This is a sample application that validates basic functionalities and
       architecture for MITHx.
+      <br />
+      <br />
+      Log in, then click on the <b>Wallet</b> and <b>Shop</b> tabs to get
+      started.
     </p>
   </div>
 );
