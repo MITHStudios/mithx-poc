@@ -96,3 +96,12 @@ Make sure the database service is running and that you are using node v18.
 ```bash
 npm start
 ```
+
+## Documentation
+
+- [MITHx PoC: scope & analysis](https://docs.google.com/document/d/1Sl8rOeGw-R44qGkeIl3cFcY7CD4SlRUhOIXnGnX58z4)
+- [MITHx PoC: architecture](https://whimsical.com/mithx-auth0-poc-SPwGAE5sxqDZNRoY6te5cX)
+- [MITHx PoC: results](https://docs.google.com/document/d/113DyTxVoq8EdqVfpaubbN-hGilT-s3SI6jnWC5-EMgg)
+- [MITHx PoC: Shopify analysis](https://docs.google.com/document/d/1IecoVRT_cyk4CYNQjsskAy_1g5XdvFRaDK0lxJZBAfY)
+
+There's also a Postman collection with Shopify calls in the `collections` folder.

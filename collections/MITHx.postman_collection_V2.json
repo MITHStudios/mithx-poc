@@ -1,0 +1,539 @@
+{
+	"info": {
+		"_postman_id": "c42d5820-13af-42d1-aed9-890d0966f69a",
+		"name": "MITHx",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2683300",
+		"_collection_link": "https://seta-workshop.postman.co/workspace/MITHx~15ce9563-2c67-4292-953a-e00445d7706a/collection/20720412-c42d5820-13af-42d1-aed9-890d0966f69a?action=share&creator=2683300&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Shopify",
+			"item": [
+				{
+					"name": "Admin API",
+					"item": [
+						{
+							"name": "products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "{{shopify_access_token_header}}",
+										"value": "{{shopify_access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{shopify_content_type}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{shopify_store_name}}.myshopify.com/admin/api/2023-04/products.json",
+									"protocol": "https",
+									"host": [
+										"{{shopify_store_name}}",
+										"myshopify",
+										"com"
+									],
+									"path": [
+										"admin",
+										"api",
+										"2023-04",
+										"products.json"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "productVariants",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "{{shopify_access_token_header}}",
+										"value": "{{shopify_access_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{shopify_content_type}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "query {\n  productVariants(first: 20) {\n    edges {\n      node {\n        id\n        displayName\n        price\n        product {\n            id\n            title\n        }\n      }\n    }\n  }\n}\n",
+										"variables": ""
+									}
+								},
+								"url": {
+									"raw": "https://{{shopify_store_name}}.myshopify.com/admin/api/2023-04/graphql.json",
+									"protocol": "https",
+									"host": [
+										"{{shopify_store_name}}",
+										"myshopify",
+										"com"
+									],
+									"path": [
+										"admin",
+										"api",
+										"2023-04",
+										"graphql.json"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"adminAccessToken = pm.collectionVariables.get('shopify_admin_access_token')",
+									"pm.collectionVariables.set('shopify_access_token', adminAccessToken)",
+									"pm.collectionVariables.set('shopify_access_token_header', 'X-Shopify-Access-Token')"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Storefront API",
+					"item": [
+						{
+							"name": "Customers",
+							"item": [
+								{
+									"name": "customerCreate",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "{{shopify_content_type}}",
+												"type": "text"
+											},
+											{
+												"key": "{{shopify_access_token_header}}",
+												"value": "{{shopify_access_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation customerCreate($input: CustomerCreateInput!) {\n  customerCreate(input: $input) {\n    customer {\n      email\n      firstName\n      lastName\n      id\n    }\n    customerUserErrors {\n      message\n    }\n  }\n}",
+												"variables": "{\n  \"input\": {\n    \"acceptsMarketing\": true,\n    \"email\": \"demo@setaworkshop.com\",\n    \"firstName\": \"Demo\",\n    \"lastName\": \"Demo\",\n    \"password\": \"123456\",\n    \"phone\": \"+16135551115\"\n  }\n}"
+											}
+										},
+										"url": {
+											"raw": "https://{{shopify_store_name}}.myshopify.com/api/2023-04/graphql.json",
+											"protocol": "https",
+											"host": [
+												"{{shopify_store_name}}",
+												"myshopify",
+												"com"
+											],
+											"path": [
+												"api",
+												"2023-04",
+												"graphql.json"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "customerAccessTokenCreate",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "{{shopify_access_token_header}}",
+												"value": "{{shopify_access_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {\n  customerAccessTokenCreate(input: $input) {\n    customerAccessToken {\n      accessToken\n    }\n    customerUserErrors {\n      message\n    }\n  }\n}",
+												"variables": "{\n  \"input\": {\n    \"email\":\"demo@setaworkshop.com\",\n    \"password\": \"123456\"\n  }\n}"
+											}
+										},
+										"url": {
+											"raw": "https://{{shopify_store_name}}.myshopify.com/api/2023-04/graphql.json",
+											"protocol": "https",
+											"host": [
+												"{{shopify_store_name}}",
+												"myshopify",
+												"com"
+											],
+											"path": [
+												"api",
+												"2023-04",
+												"graphql.json"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "customerAccessTokenCreateWithMultipass",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "X-Shopify-Storefront-Access-Token",
+												"value": "{{shopify_storefront_access_token}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation customerAccessTokenCreateWithMultipass($multipassToken: String!) {\n  customerAccessTokenCreateWithMultipass(multipassToken: $multipassToken) {\n    customerAccessToken {\n      accessToken\n    }\n    customerUserErrors {\n      message\n    }\n  }\n}\n",
+												"variables": "{\n  \"multipassToken\": \"[MULTIPASS_HASH_VALUE]\"\n}"
+											}
+										},
+										"url": {
+											"raw": "https://{{shopify_store_name}}.myshopify.com/api/2023-04/graphql.json",
+											"protocol": "https",
+											"host": [
+												"{{shopify_store_name}}",
+												"myshopify",
+												"com"
+											],
+											"path": [
+												"api",
+												"2023-04",
+												"graphql.json"
+											],
+											"query": [
+												{
+													"key": "",
+													"value": "",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "customer",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "X-Shopify-Storefront-Access-Token",
+												"value": "{{shopify_storefront_access_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "query {\n  customer(customerAccessToken: \"53a171214fd95d27da38e57c9f54f9f0\") {\n    id\n    firstName\n    lastName\n    acceptsMarketing\n    email\n    phone\n  }\n}\n",
+												"variables": ""
+											}
+										},
+										"url": {
+											"raw": "https://{{shopify_store_name}}.myshopify.com/api/2023-04/graphql.json",
+											"protocol": "https",
+											"host": [
+												"{{shopify_store_name}}",
+												"myshopify",
+												"com"
+											],
+											"path": [
+												"api",
+												"2023-04",
+												"graphql.json"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Checkouts",
+							"item": [
+								{
+									"name": "checkoutCreate",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "{{shopify_access_token_header}}",
+												"value": "{{shopify_storefront_access_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation checkoutCreate($input: CheckoutCreateInput!) {\n  checkoutCreate(input: $input) {\n    checkout {\n      id\n      webUrl\n    }\n    checkoutUserErrors {\n      message\n    }\n    queueToken\n  }\n}",
+												"variables": "{\n  \"input\": {\n    \"allowPartialAddresses\": true,\n    \"buyerIdentity\": {\n      \"countryCode\": \"US\"\n    },\n    \"customAttributes\": [\n      {\n        \"key\": \"key\",\n        \"value\": \"val\"\n      }\n    ],\n    \"email\": \"demo@setaworkshop.com\",\n    \"lineItems\": [\n      {\n        \"customAttributes\": [\n          {\n            \"key\": \"key\",\n            \"value\": \"val\"\n          }\n        ],\n        \"quantity\": 9,\n        \"variantId\": \"gid://shopify/ProductVariant/45269397930293\"\n      }\n    ],\n    \"note\": \"testnote\",\n    \"shippingAddress\": {\n      \"address1\": \"address1\",\n      \"address2\": \"address2\",\n      \"city\": \"mvd\",\n      \"company\": \"seta\",\n      \"country\": \"uy\",\n      \"firstName\": \"test\",\n      \"lastName\": \"test\",\n      \"phone\": \"1111\",\n      \"province\": \"montevideo\",\n      \"zip\": \"11200\"\n    }\n  }\n}\n"
+											}
+										},
+										"url": {
+											"raw": "https://{{shopify_store_name}}.myshopify.com/api/2023-04/graphql.json",
+											"protocol": "https",
+											"host": [
+												"{{shopify_store_name}}",
+												"myshopify",
+												"com"
+											],
+											"path": [
+												"api",
+												"2023-04",
+												"graphql.json"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "checkoutCompleteFree",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "{{shopify_access_token_header}}",
+												"value": "{{shopify_storefront_access_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation checkoutCompleteFree($checkoutId: ID!) {\n  checkoutCompleteFree(checkoutId: $checkoutId) {\n    checkout {\n        email\n        completedAt\n        id\n        order {\n            email\n            id\n            orderNumber\n        }\n    }\n    checkoutUserErrors {\n        message\n    }\n  }\n}",
+												"variables": "{\n  \"checkoutId\": \"gid://shopify/Checkout/fb7c030255876bc3e7f288b1bcac9b25?key=92fd8197414855f8e2fbad8ffa729499\"\n}"
+											}
+										},
+										"url": {
+											"raw": "https://{{shopify_store_name}}.myshopify.com/api/2023-04/graphql.json",
+											"protocol": "https",
+											"host": [
+												"{{shopify_store_name}}",
+												"myshopify",
+												"com"
+											],
+											"path": [
+												"api",
+												"2023-04",
+												"graphql.json"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"storefrontAccessToken = pm.collectionVariables.get('shopify_storefront_access_token')",
+									"pm.collectionVariables.set('shopify_access_token', storefrontAccessToken)",
+									"pm.collectionVariables.set('shopify_access_token_header', 'X-Shopify-Storefront-Access-Token')"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "scope",
+				"value": "openid name email",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "{{auth0_password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{auth0_username}}",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{auth0_secret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{auth0_clientid}}",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://dev-2t4t5kqlj04r3otl.us.auth0.com/oauth/token",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "password_credentials",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "Myth-X",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "shopify_store_name",
+			"value": "quickstart-a00e45b5",
+			"type": "string"
+		},
+		{
+			"key": "shopify_admin_access_token",
+			"value": "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",
+			"type": "string"
+		},
+		{
+			"key": "shopify_storefront_access_token",
+			"value": "a1ecc8038073e8917883085ce8602503",
+			"type": "string"
+		},
+		{
+			"key": "shopify_access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "shopify_access_token_header",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "shopify_content_type",
+			"value": "application/json",
+			"type": "string"
+		}
+	]
+}
