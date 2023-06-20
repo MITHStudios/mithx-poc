@@ -62,7 +62,9 @@ export const Shop = () => {
             method: "POST",
           }
         ).then((res) => {
-          setCustomer(res.customer);
+          res.json().then((resJson) => {
+            setCustomer(resJson.customer);
+          });
         });
       } else {
         setCustomer(res.customer);
